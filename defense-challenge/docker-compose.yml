@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8082:80"
+    depends_on:
+      - db
+    volumes:
+      - ./web:/var/www/html
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vulnlogin
+      MYSQL_USER: vuln
+      MYSQL_PASSWORD: vulnpass
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql

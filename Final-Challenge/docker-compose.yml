@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8084:80"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: finaldb
+      MYSQL_USER: finaluser
+      MYSQL_PASSWORD: finalpass
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql

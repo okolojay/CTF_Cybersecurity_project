@@ -1,0 +1,14 @@
+FROM python:3.9
+
+# Install necessary packages for the virtual user to interact with the CTFd instances
+RUN pip install requests
+
+# Create a working directory for the virtual user script
+WORKDIR /usr/src/app
+
+# Copy the virtual user Python script into the container
+COPY virtual_user.py .
+
+# Set the entrypoint to run the virtual user script
+CMD ["python", "./virtual_user.py"]
+

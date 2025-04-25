@@ -1,0 +1,11 @@
+[2025-04-07 15:42:11] VirtualUser1 => Role: Attack | Flag: flag{login_bypassed_successfully}
+[2025-04-07 15:44:35] VirtualUser2 => Role: Report | Flag: flag{reporting_successful}
+[2025-04-07 15:47:30] VirtualUser3 => Role: Defend | Flag: flag{patched_sql_vulnerability}
+[2025-04-07 15:50:04] VirtualUser4 => Role: Attack | Flag: flag{login_bypassed_successfully}
+[2025-04-07 15:52:12] VirtualUser5 => Role: Report | Flag: flag{reporting_successful}
+[2025-04-07 15:55:02] VirtualUser6 => Role: Defend | Flag: flag{patched_sql_vulnerability}
+[2025-04-07 15:57:43] VirtualUser7 => Role: Attack | Flag: flag{login_bypassed_successfully}
+[2025-04-07 15:59:45] VirtualUser8 => Role: Report | Flag: flag{reporting_successful}
+[2025-04-07 16:02:24] VirtualUser9 => Role: Defend | Flag: flag{patched_sql_vulnerability}
+[2025-04-07 16:05:12] VirtualUser10 => Role: Attack | Flag: flag{login_bypassed_successfully}
+

@@ -1,0 +1,118 @@
+version: '3'
+services:
+  ctf1:  # Vulnerable CTFd instance (Attacked by Virtual User)
+    image: ctfd/ctfd
+    environment:
+      - SECRET_KEY=<random-secret-key>
+      - DATABASE_URL=mysql+pymysql://ctfd:ctfdpassword@db1/ctfd
+    networks:
+      - ctf-network
+    container_name: ctf1
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./challenges:/srv/ctfd/challenges # Your challenge files location
+      - ctf1-data:/srv/ctfd  # Persistent data for CTFd instance 1
+
+  ctf2:  # Vulnerable CTFd instance (Defended by Virtual User)
+    image: ctfd/ctfd
+    environment:
+      - SECRET_KEY=<random-secret-key>
+      - DATABASE_URL=mysql+pymysql://ctfd:ctfdpassword@db2/ctfd
+    networks:
+      - ctf-network
+    container_name: ctf2
+    ports:
+      - "8002:8000"  # Expose CTFd instance 2 for defense
+    volumes:
+      - ./challenges:/srv/ctfd/challenges  # Your challenge files location
+      - ctf2-data:/srv/ctfd  # Persistent data for CTFd instance 2
+
+  ctf3:  # Vulnerable CTFd instance (Reported by Virtual User)
+    image: ctfd/ctfd
+    environment:
+      - SECRET_KEY=<random-secret-key>
+      - DATABASE_URL=mysql+pymysql://ctfd:ctfdpassword@db3/ctfd
+    networks:
+      - ctf-network
+    container_name: ctf3
+    ports:
+      - "8003:8000"  # Expose CTFd instance 3 for report generation
+    volumes:
+      - ./challenges:/srv/ctfd/challenges  # Your challenge files location
+      - ctf3-data:/srv/ctfd  # Persistent data for CTFd instance 3
+
+  db1:  # MySQL database for CTF1
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ctfdpassword
+      MYSQL_DATABASE: ctfd
+    networks:
+      - ctf-network
+    container_name: db1
+    volumes:
+      - db1-data:/var/lib/mysql  # Persistent MySQL data for CTF1
+
+  db2:  # MySQL database for CTF2
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ctfdpassword
+      MYSQL_DATABASE: ctfd
+    networks:
+      - ctf-network
+    container_name: db2
+    volumes:
+      - db2-data:/var/lib/mysql  # Persistent MySQL data for CTF2
+
+  db3:  # MySQL database for CTF3
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ctfdpassword
+      MYSQL_DATABASE: ctfd
+    networks:
+      - ctf-network
+    container_name: db3
+    volumes:
+      - db3-data:/var/lib/mysql  # Persistent MySQL data for CTF3
+
+  virtual-user:  # Virtual User Container (for attacking, defending, and reporting)
+    build:
+      context: .
+      dockerfile: Dockerfile.virtual-user  # Virtual user Dockerfile
+    networks:
+      - ctf-network
+    container_name: virtual-user
+    depends_on:
+      - ctf1
+      - ctf2
+      - ctf3
+    environment:
+      - ATTACK_TARGET=ctf1  # Virtual user will start by attacking ctf1
+      - DEFEND_TARGET=ctf2  # Virtual user will defend ctf2
+      - REPORT_TARGET=ctf3  # Virtual user will report for ctf3
+    entrypoint: ["python3", "virtual_user.py"]  # Start virtual user logic
+ 
+ virtual-user:
+    build: .
+    container_name: virtual-user-simulator
+    volumes:
+      - ./user_interaction_log.txt:/usr/src/app/user_interaction_log.txt  
+
+networks:
+  ctf-network:
+    driver: bridge
+
+volumes:
+  ctf1-data:
+    driver: local
+  ctf2-data:
+    driver: local
+  ctf3-data:
+    driver: local
+  db1-data:
+    driver: local
+  db2-data:
+    driver: local
+  db3-data:
+    driver: local
+
